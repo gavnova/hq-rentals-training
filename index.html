@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQ Rentals — Staff Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161820;
+    --surface2: #1e2030;
+    --surface3: #252840;
+    --accent: #4f6ef7;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #e8eaf0;
+    --text-muted: #8892a4;
+    --border: rgba(255,255,255,0.07);
+    --radius: 14px;
+    --glow: 0 0 30px rgba(79,110,247,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* Background grid effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(79,110,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,110,247,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout ── */
+  .app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── Header ── */
+  header {
+    padding: 22px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,15,20,0.85);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; }
+  .logo-text span { color: var(--accent); }
+  .header-badge {
+    font-size: 11px; font-weight: 500; padding: 4px 10px;
+    border-radius: 20px; border: 1px solid var(--accent);
+    color: var(--accent); background: rgba(79,110,247,0.1);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 48px 32px 32px;
+    text-align: center;
+    position: relative;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 200px;
+    background: radial-gradient(ellipse at center, rgba(79,110,247,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 44px);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .hero h1 span { 
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { color: var(--text-muted); font-size: 15px; max-width: 520px; margin: 0 auto 28px; line-height: 1.6; }
+
+  /* ── Progress Bar ── */
+  .progress-bar-wrap {
+    max-width: 480px; margin: 0 auto 12px;
+    background: var(--surface2); border-radius: 99px; height: 8px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 99px;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+
+  /* ── Main Grid ── */
+  .main { padding: 12px 32px 60px; max-width: 1280px; margin: 0 auto; width: 100%; }
+
+  /* ── Section tabs ── */
+  .tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .tab {
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text); border-color: var(--accent); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── Content Area ── */
+  .content-area { display: none; }
+  .content-area.active { display: block; }
+
+  /* ── Module Grid ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .module-card:hover { border-color: rgba(79,110,247,0.4); transform: translateY(-2px); box-shadow: var(--glow); }
+  .module-card:hover::before { opacity: 1; }
+  .module-card.completed { border-color: rgba(16,185,129,0.3); }
+  .module-card.completed::before { background: var(--green); opacity: 1; }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .card-icon { font-size: 26px; line-height: 1; }
+  .card-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 6px;
+  }
+  .badge-core { background: rgba(79,110,247,0.15); color: var(--accent); }
+  .badge-daily { background: rgba(245,158,11,0.15); color: var(--gold); }
+  .badge-advanced { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .badge-done { background: rgba(16,185,129,0.15); color: var(--green); }
+
+  .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .card-time { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+  .card-btn {
+    font-size: 12px; font-weight: 600; padding: 5px 12px;
+    border-radius: 6px; background: var(--surface2); color: var(--accent);
+    border: 1px solid rgba(79,110,247,0.3);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .card-btn:hover { background: var(--accent); color: #fff; }
+  .card-btn.done-btn { color: var(--green); border-color: rgba(16,185,129,0.3); }
+
+  /* ── Lesson Panel ── */
+  .lesson-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    align-items: flex-start; justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .lesson-overlay.open { display: flex; }
+  .lesson-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%; max-width: 780px;
+    margin: auto;
+    overflow: hidden;
+    animation: slideUp 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .lesson-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  .lesson-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; }
+  .lesson-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .close-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 18px; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .close-btn:hover { background: var(--surface3); color: var(--text); }
+  .lesson-body { padding: 28px; }
+
+  /* ── Why Box ── */
+  .why-box {
+    background: linear-gradient(135deg, rgba(79,110,247,0.1), rgba(6,182,212,0.05));
+    border: 1px solid rgba(79,110,247,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .why-box-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
+  }
+  .why-box p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── Steps ── */
+  .steps { list-style: none; margin-bottom: 24px; }
+  .step {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--accent);
+  }
+  .step-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .step-content p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .step-content .nav-path {
+    font-family: monospace; font-size: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 6px; display: inline-block; margin-top: 6px;
+    color: var(--accent3);
+  }
+
+  /* ── Rate Table ── */
+  .rate-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  .rate-table th {
+    background: var(--surface2); padding: 10px 14px;
+    text-align: left; font-weight: 600; color: var(--text-muted);
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .rate-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .rate-table tr:last-child td { border-bottom: none; }
+  .price { color: var(--green); font-weight: 600; }
+
+  /* ── Quiz ── */
+  .quiz-section { margin-top: 24px; }
+  .quiz-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .quiz-q { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .quiz-opt {
+    padding: 11px 16px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    cursor: pointer; font-size: 13px; text-align: left;
+    transition: all 0.2s; color: var(--text);
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: var(--surface3); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red); }
+  .quiz-feedback { font-size: 13px; color: var(--text-muted); padding: 12px 16px; border-radius: 10px; display: none; }
+  .quiz-feedback.show { display: block; background: var(--surface2); }
+
+  /* ── Lesson Footer ── */
+  .lesson-footer {
+    padding: 20px 28px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .mark-done-btn {
+    padding: 10px 22px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .mark-done-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .lesson-link {
+    font-size: 13px; color: var(--accent); text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .lesson-link:hover { text-decoration: underline; }
+
+  /* ── AI Chat ── */
+  .ai-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .ai-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .ai-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .ai-subtitle { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  .chat-messages {
+    padding: 20px; min-height: 180px; max-height: 320px;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+  }
+  .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
+  .chat-msg.user { flex-direction: row-reverse; }
+  .msg-avatar {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+  }
+  .msg-avatar.ai { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .msg-avatar.user { background: var(--surface3); }
+  .msg-bubble {
+    padding: 10px 14px; border-radius: 12px; max-width: 85%;
+    font-size: 13px; line-height: 1.55;
+  }
+  .chat-msg.ai .msg-bubble { background: var(--surface2); border: 1px solid var(--border); }
+  .chat-msg.user .msg-bubble { background: var(--accent); color: #fff; }
+  .chat-input-wrap {
+    padding: 16px 20px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px;
+  }
+  .chat-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .chat-input:focus { border-color: var(--accent); }
+  .chat-input::placeholder { color: var(--text-muted); }
+  .chat-send {
+    padding: 10px 16px; border-radius: 10px;
+    background: var(--accent); color: #fff; border: none;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .chat-send:hover { opacity: 0.9; }
+  .chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+  .quick-chips { padding: 0 20px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+  }
+  .chip:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── Checklist Widget ── */
+  .checklist-widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+  .cw-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .cw-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+  .check-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+    border: 2px solid var(--border); transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .check-item.checked .check-box { background: var(--green); border-color: var(--green); }
+  .check-item.checked .check-box::after { content: '✓'; font-size: 11px; color: #fff; font-weight: 700; }
+  .check-item.checked .check-text { text-decoration: line-through; color: var(--text-muted); }
+  .check-text { font-size: 13px; }
+
+  /* ── Two-col layout ── */
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .main { padding: 12px 16px 60px; } header { padding: 16px; } .hero { padding: 32px 16px 24px; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🚗</div>
+      <div class="logo-text">HQ Rentals <span>Staff Hub</span></div>
+    </div>
+    <div class="header-badge">New Staff Training</div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Your <span>Learning Dashboard</span><br>for HQ Rentals</h1>
+    <p>Work through each module at your own pace. Each lesson explains not just <em>how</em>, but <em>why</em> — so you understand the system, not just the steps.</p>
+    <div class="progress-label" id="progressLabel">0 of 8 modules completed</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('start')">🚀 Getting Started</div>
+      <div class="tab" onclick="switchTab('operations')">📋 Daily Operations</div>
+      <div class="tab" onclick="switchTab('fleet')">🚙 Fleet Management</div>
+      <div class="tab" onclick="switchTab('ai')">🤖 Ask the AI</div>
+    </div>
+
+    <!-- Tab: Getting Started -->
+    <div class="content-area active" id="tab-start">
+      <div class="two-col">
+        <div>
+          <div class="module-grid" id="grid-start">
+
+            <div class="module-card" id="card-overview">
+              <div class="card-header">
+                <div class="card-icon">🏢</div>
+                <div class="card-badge badge-core">Core</div>
+              </div>
+              <div class="card-title">What Is HQ Rentals?</div>
+              <div class="card-desc">Understand the big picture — what the software does and why your business uses it.</div>
+              <div class="card-footer">
+                <div class="card-time">⏱ 5 min</div>
+                <button class="card-btn" onclick="openLesson('overview')">Start →</button>
+              </div>
+            </div>
+
+            <div class="module-card" id="card-system">
+              <div class="card-header">
+                <div class="card-icon">⚙️</div>
+                <div class="card-badge badge-core">Core</div>
+              </div>
+              <div class="card-title">System Basics & Navigation</div>
+              <div class="card-desc">Learn how the interface is organized and where to find key features fast.</div>
+              <div class="card-footer">
+                <div class="card-time">⏱ 8 min</div>
+                <button class="card-btn" onclick="openLesson('system')">Start →</button>
+              </div>
+            </div>
+
+            <div class="module-card" id="card-contacts">
+              <div class="card-header">
+                <div class="card-icon">👥</div>
+                <div class="card-badge badge-core">Core</div>
+              </div>
+              <div class="card-title">Contacts & Customers</div>
+              <div class="card-desc">How customer records work — creating, searching, and managing rental history.</div>
+              <div class="card-footer">
+                <div class="card-time">⏱ 6 min</div>
+                <button class="card-btn" onclick="openLesson('contacts')">Start →</button>
+              </div>
+            </div>
+
+            <div class="module-card" id="card-users">
+              <div class="card-header">
+                <div class="card-icon">🔐</div>
+                <div class="card-badge badge-core">Core</div>
+              </div>
+              <div class="card-title">User Roles & Permissions</div>
+              <div class="card-desc">Why different staff have different access levels and how that protects the business.</div>
+              <div class="card-footer">
+                <div class="card-time">⏱ 5 min</div>
+                <button class="card-btn" onclick="openLesson('users')">Start →</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Day-1 Checklist -->
+        <div class="checklist-widget">
+          <div class="cw-title">📌 Day 1 Checklist</div>
+          <div class="cw-sub">Things to confirm before your first shift</div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Login credentials received from manager</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Can access HQ Rentals dashboard</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Reviewed HQRS Overview module</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Know how to search for a reservation</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Know where to find the Reservations Calendar</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Know how to check fleet availability</div>
+          </div>
+          <div class="check-item" onclick="toggleCheck(this)">
+            <div class="check-box"></div><div class="check-text">Reviewed support ticket process</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Daily Operations -->
+    <div class="content-area" id="tab-operations">
+      <div class="module-grid">
+
+        <div class="module-card" id="card-reservations">
+          <div class="card-header">
+            <div class="card-icon">📅</div>
+            <div class="card-badge badge-daily">Daily</div>
+          </div>
+          <div class="card-title">Creating a Reservation</div>
+          <div class="card-desc">Step-by-step walkthrough of the full reservation process from start to finish.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 10 min</div>
+            <button class="card-btn" onclick="openLesson('reservations')">Start →</button>
+          </div>
+        </div>
+
+        <div class="module-card" id="card-agreements">
+          <div class="card-header">
+            <div class="card-icon">📝</div>
+            <div class="card-badge badge-daily">Daily</div>
+          </div>
+          <div class="card-title">Rental Agreements & Returns</div>
+          <div class="card-desc">How to open, complete, and close a rental agreement. What to check at return.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 8 min</div>
+            <button class="card-btn" onclick="openLesson('agreements')">Start →</button>
+          </div>
+        </div>
+
+        <div class="module-card" id="card-payments">
+          <div class="card-header">
+            <div class="card-icon">💳</div>
+            <div class="card-badge badge-daily">Daily</div>
+          </div>
+          <div class="card-title">Payments & Deposits</div>
+          <div class="card-desc">Processing payments, security deposits, and understanding how charges are calculated.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 7 min</div>
+            <button class="card-btn" onclick="openLesson('payments')">Start →</button>
+          </div>
+        </div>
+
+        <div class="module-card" id="card-calendar">
+          <div class="card-header">
+            <div class="card-icon">🗓️</div>
+            <div class="card-badge badge-daily">Daily</div>
+          </div>
+          <div class="card-title">Reservations Calendar</div>
+          <div class="card-desc">Reading the calendar view to manage overlaps, availability, and fleet utilization.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 6 min</div>
+            <button class="card-btn" onclick="openLesson('calendar')">Start →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab: Fleet Management -->
+    <div class="content-area" id="tab-fleet">
+      <div class="module-grid">
+
+        <div class="module-card" id="card-addvehicle">
+          <div class="card-header">
+            <div class="card-icon">🚙</div>
+            <div class="card-badge badge-advanced">Fleet</div>
+          </div>
+          <div class="card-title">Adding a New Vehicle</div>
+          <div class="card-desc">The full onboarding process for a new vehicle — class, listing, rates, and pictures.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 12 min</div>
+            <button class="card-btn" onclick="openLesson('addvehicle')">Start →</button>
+          </div>
+        </div>
+
+        <div class="module-card" id="card-rates">
+          <div class="card-header">
+            <div class="card-icon">💰</div>
+            <div class="card-badge badge-advanced">Fleet</div>
+          </div>
+          <div class="card-title">Rates & Pricing</div>
+          <div class="card-desc">Understanding how daily rates are set by vehicle type, age, and season.</div>
+          <div class="card-footer">
+            <div class="card-time">⏱ 8 min</div>
+            <button class="card-btn" onclick="openLesson('rates')">Start →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab: AI Assistant -->
+    <div class="content-area" id="tab-ai">
+      <div class="two-col">
+        <div class="ai-section">
+          <div class="ai-header">
+            <div class="ai-dot"></div>
+            <div class="ai-title">HQ Rentals AI Tutor</div>
+            <div class="ai-subtitle">Powered by Claude</div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg ai">
+              <div class="msg-avatar ai">🤖</div>
+              <div class="msg-bubble">Hey! I'm your HQ Rentals training assistant. I know the full Knowledge Base — ask me anything about the system, processes, or best practices. What would you like to learn?</div>
+            </div>
+          </div>
+          <div class="quick-chips" id="quickChips">
+            <div class="chip" onclick="sendChip(this)">How do I create a reservation?</div>
+            <div class="chip" onclick="sendChip(this)">What's the difference between a vehicle class and a vehicle?</div>
+            <div class="chip" onclick="sendChip(this)">How are rates calculated?</div>
+            <div class="chip" onclick="sendChip(this)">What is a security deposit?</div>
+            <div class="chip" onclick="sendChip(this)">How do I handle a late return?</div>
+          </div>
+          <div class="chat-input-wrap">
+            <input class="chat-input" id="chatInput" placeholder="Ask anything about HQ Rentals..." onkeydown="if(event.key==='Enter')sendMessage()">
+            <button class="chat-send" id="sendBtn" onclick="sendMessage()">Ask →</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="checklist-widget">
+            <div class="cw-title">📚 Knowledge Base Sections</div>
+            <div class="cw-sub">Quick links to official docs</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+              <a href="https://hqrs.notion.site/Knowledge-Base-b3dc775703154b14b2ba62fad43c7032" target="_blank" style="text-decoration:none;">
+                <div class="check-item" style="cursor:pointer;padding:8px 0;">
+                  <div style="font-size:16px;">🏢</div>
+                  <div style="font-size:13px;color:var(--accent);">HQRS Overview →</div>
+                </div>
+              </a>
+              <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-muted);padding-left:4px;line-height:1.7;">
+                <div>📅 Reservation Process</div>
+                <div>🗓 Reservations Calendar</div>
+                <div>📝 Rental Agreement & Return</div>
+                <div>🚙 Fleet Management</div>
+                <div>💰 Rates Management</div>
+                <div>💳 Payments & Deposits</div>
+                <div>📊 Dashboards & Reports</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="checklist-widget">
+            <div class="cw-title">💡 Pro Tips for New Staff</div>
+            <div class="cw-sub">Things experienced staff wish they knew sooner</div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.5;padding:10px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent);">
+                <strong style="color:var(--text);">Vehicle Class vs Vehicle:</strong> Think of a Class as a "model" (e.g. Toyota Camry 2022 Blue) and a Vehicle as the actual physical car. Each car gets its own record.
+              </div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.5;padding:10px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--gold);">
+                <strong style="color:var(--text);">Set to Reserved first:</strong> When adding a new car, always set status to "Reserved" until fully ready — prevents accidental online bookings.
+              </div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.5;padding:10px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--green);">
+                <strong style="color:var(--text);">Can't find an answer?</strong> Use the support ticket system inside the Knowledge Base — it goes directly to the HQ Rentals team.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══════════════════════════════
+     LESSON OVERLAY
+══════════════════════════════ -->
+<div class="lesson-overlay" id="lessonOverlay" onclick="closeLesson(event)">
+  <div class="lesson-panel" onclick="event.stopPropagation()">
+    <div class="lesson-header">
+      <div>
+        <div class="lesson-title" id="lessonTitle"></div>
+        <div class="lesson-subtitle" id="lessonSubtitle"></div>
+      </div>
+      <div class="close-btn" onclick="closeLesson()">✕</div>
+    </div>
+    <div class="lesson-body" id="lessonBody"></div>
+    <div class="lesson-footer">
+      <a class="lesson-link" href="https://hqrs.notion.site/Knowledge-Base-b3dc775703154b14b2ba62fad43c7032" target="_blank">📖 Open in Knowledge Base →</a>
+      <button class="mark-done-btn" id="markDoneBtn" onclick="markDone()">✓ Mark as Complete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ──
+let completedModules = JSON.parse(localStorage.getItem('hqr_completed') || '[]');
+let currentLessonId = null;
+const totalModules = 8;
+
+// ── Lessons Content ──
+const lessons = {
+  overview: {
+    title: "What Is HQ Rentals Software?",
+    subtitle: "Module 1 of 8 · Getting Started · 5 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Think of HQ Rentals as the "brain" of your car rental operation. Without it, you'd be managing reservations on paper, tracking vehicles in spreadsheets, and manually handling payments — which leads to double-bookings, lost revenue, and unhappy customers. This software connects all those moving pieces into one system.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>What it does</h4><p>HQ Rentals handles reservations, fleet tracking, customer management, payments, invoicing, taxes, and online booking — all in one platform.</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Who uses it</h4><p>Every staff member interacts with it — from front-desk agents taking reservations to managers reviewing revenue reports.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Why it matters to you</h4><p>Your accuracy in the system directly affects the customer experience and the company's revenue. A mistake in a reservation can cascade into a double-booked car and an unhappy customer.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Where to get help</h4><p>The official Knowledge Base (the one you're learning from) covers every feature. For issues not in the KB, use the support ticket system.</p><span class="nav-path">Knowledge Base → Support Tickets</span></div></li>
+      </ul>
+      <div class="quiz-section">
+        <div class="quiz-label">✅ Quick Check</div>
+        <div class="quiz-q">What would happen if a reservation is entered incorrectly in HQ Rentals?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Nothing — the system catches all errors automatically</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, true)">It could lead to double-bookings or incorrect charges for the customer</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">The manager gets automatically notified to fix it</button>
+        </div>
+        <div class="quiz-feedback" id="quizFeedback">Correct! Accuracy matters because the system trusts the data you enter. Always double-check reservation details before saving.</div>
+      </div>
+    `
+  },
+
+  system: {
+    title: "System Basics & Navigation",
+    subtitle: "Module 2 of 8 · Getting Started · 8 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Knowing where everything lives saves you time under pressure. When a customer is standing at the counter, you don't want to be hunting through menus. Think of the navigation like your kitchen — if you know where the knives are, you cook faster.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Main Navigation Areas</h4><p>The system is divided into sections: <strong>Fleet</strong> (your cars), <strong>Reservations</strong> (bookings), <strong>Contacts</strong> (customers), <strong>Reports</strong> (data), and <strong>Settings</strong> (configuration).</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Settings vs. Operations</h4><p>Settings are for managers — they configure how the system works (rates, taxes, integrations). Daily staff work in Reservations, Fleet, and Contacts. Be cautious in Settings unless instructed.</p><span class="nav-path">Settings → Car Rental → [various sub-sections]</span></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Search is your best friend</h4><p>You can search for customers, reservations, and vehicles from most screens. Learn the search before anything else — it will save you every single day.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Forms & Formbuilder</h4><p>Custom forms (like inspection checklists or toll tags) live under the Forms section. You'll use these during rentals and returns.</p><span class="nav-path">Forms → [form name]</span></div></li>
+      </ul>
+      <div class="quiz-section">
+        <div class="quiz-label">✅ Quick Check</div>
+        <div class="quiz-q">A customer calls to modify their existing reservation. Where do you go first?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Settings → Car Rental</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, true)">Reservations → Search for the customer or booking</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Fleet → Vehicles</button>
+        </div>
+        <div class="quiz-feedback" id="quizFeedback">Correct! Reservations is where all active and upcoming bookings live. Use the search to find the customer quickly by name, email, or reservation number.</div>
+      </div>
+    `
+  },
+
+  addvehicle: {
+    title: "Adding a New Vehicle",
+    subtitle: "Fleet Management · 12 min · Based on your SOVA Training Guide",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Every car in your fleet must be properly registered in HQ Rentals before it can be rented. Think of it like registering a new employee — until they're in the system with the right information, they can't do any work. Skipping steps here leads to unbookable cars, wrong rates, or toll violations going untracked.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Create a Vehicle Class</h4><p>A <strong>Vehicle Class</strong> is the "template" or "model" (e.g., Toyota Camry – 2022 – Blue). Each unique car gets its own Class. Name it as: <em>Make Model – Year – Color</em></p><span class="nav-path">Settings → Vehicle Class → Add Vehicle Class</span></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Set availability to "No" initially</h4><p>Until the car is fully onboarded, set "Available on Website?" to <strong>No</strong>. This prevents customers from booking a car that isn't ready yet. Ensure "Active" is checked, or it will be hidden from internal use too.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Add the Toll Tag</h4><p>Find the vehicle's Transponder (E-ZPass) number in the Fleet Database, then register it in HQ Rentals. This links toll charges to the correct vehicle automatically.</p><span class="nav-path">Forms → Toll Tag → Add Toll Tag</span></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Add the Vehicle Listing</h4><p>This is the individual car record. Fill in: VIN, License Plate, Make/Model/Color/Year, Odometer, and Toll Tag. Set status to <strong>"Reserved"</strong> until confirmed ready.</p><span class="nav-path">Fleet → Vehicles → Add Vehicle</span></div></li>
+        <li class="step"><div class="step-num">5</div><div class="step-content"><h4>Set the Daily Rate</h4><p>Use the rate table below to determine the correct rate, then add it in Settings.</p><span class="nav-path">Settings → Car Rental → Rates → Add Rates</span></div></li>
+      </ul>
+      <table class="rate-table">
+        <tr><th>Vehicle Type</th><th>Age</th><th>Daily Rate</th></tr>
+        <tr><td>Economy</td><td>1–5 years</td><td class="price">$80/day</td></tr>
+        <tr><td>Economy</td><td>5+ years</td><td class="price">$60/day</td></tr>
+        <tr><td>Compact</td><td>1–5 years</td><td class="price">$70/day</td></tr>
+        <tr><td>Compact</td><td>5+ years</td><td class="price">$50/day</td></tr>
+        <tr><td>SUV Economy</td><td>1–5 years</td><td class="price">$90/day</td></tr>
+        <tr><td>SUV Economy</td><td>5+ years</td><td class="price">$70/day</td></tr>
+      </table>
+      <div class="quiz-section">
+        <div class="quiz-label">✅ Quick Check</div>
+        <div class="quiz-q">You've just added a new 2023 Economy car. Before it can be booked online, what must you do?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Nothing — it's automatically available after creation</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Send an email to the manager</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, true)">Complete all onboarding steps, then change "Available on Website?" to Yes and update status from Reserved</button>
+        </div>
+        <div class="quiz-feedback" id="quizFeedback">Correct! The car goes through a deliberate holding status (Reserved, not available online) so that only fully-ready vehicles can be booked by customers.</div>
+      </div>
+    `
+  },
+
+  reservations: {
+    title: "Creating a Reservation",
+    subtitle: "Daily Operations · 10 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>The reservation is the contract before the contract. It commits a vehicle to a customer for specific dates. Getting this right prevents double-bookings, ensures correct pricing, and sets customer expectations upfront.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Find or Create the Customer</h4><p>Search Contacts first — don't create a duplicate. If new, create a contact with full name, email, phone, and driver's license info.</p><span class="nav-path">Contacts → Search → Add Contact (if new)</span></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Start a New Reservation</h4><p>Select the pickup date, return date, pickup location, and vehicle class. HQ Rentals will show availability automatically — only available cars appear.</p><span class="nav-path">Reservations → New Reservation</span></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Review the Pricing</h4><p>The system calculates the rate based on days × daily rate + any additional charges (insurance, extras). Always review with the customer before confirming.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Collect a Deposit</h4><p>A security deposit is held (not charged) on the customer's card. This protects against damage, fuel charges, or late returns. It's released when the car comes back clean.</p></div></li>
+        <li class="step"><div class="step-num">5</div><div class="step-content"><h4>Send Confirmation</h4><p>The system can automatically send a confirmation email to the customer. Make sure their email is correct in their contact record.</p></div></li>
+      </ul>
+      <div class="quiz-section">
+        <div class="quiz-label">✅ Quick Check</div>
+        <div class="quiz-q">A customer wants to book a car. You search their name and find a record from 2 years ago. What should you do?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="checkAnswer(this, true)">Use the existing record — verify their details are still current</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Create a new contact record to keep things fresh</button>
+          <button class="quiz-opt" onclick="checkAnswer(this, false)">Ask your manager whether to use the old record</button>
+        </div>
+        <div class="quiz-feedback" id="quizFeedback">Correct! Always use the existing contact — it preserves their rental history and prevents data duplication. Just update any outdated details.</div>
+      </div>
+    `
+  },
+
+  contacts: {
+    title: "Contacts & Customers",
+    subtitle: "Module 3 of 8 · Getting Started · 6 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Every customer interaction is tied to their Contact record. Think of it like a customer file in a filing cabinet — every rental, payment, and note lives there. Duplicate records create chaos: split history, incorrect invoices, and confusion at the counter.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Always search before creating</h4><p>Before adding a new customer, search by name, phone, AND email. Duplicates are one of the most common data problems in rental systems.</p><span class="nav-path">Contacts → Search</span></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Required fields</h4><p>At minimum: Full name, email, phone number, and driver's license info. Missing details will cause issues with agreements and invoices later.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Rental history is automatic</h4><p>Once a contact is linked to reservations, their history builds automatically. This helps you identify repeat customers and spot patterns.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Notes are valuable</h4><p>Leave notes on contacts for things like "prefers pickup calls" or "had a late return incident." Future staff will thank you.</p></div></li>
+      </ul>
+    `
+  },
+
+  users: {
+    title: "User Roles & Permissions",
+    subtitle: "Module 4 of 8 · Getting Started · 5 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Not everyone should be able to change rates, delete records, or access financial reports. Permissions are like a set of keys — the front-desk agent gets the keys to the front door, the manager gets all the keys. This protects the business from accidental (or intentional) changes.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Your role determines your access</h4><p>When you were set up, your manager assigned you a role. This controls exactly what you can see, edit, and delete in the system.</p><span class="nav-path">Settings → User Management</span></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>If something is greyed out</h4><p>That means your role doesn't have permission. Don't try to work around it — ask your manager if you genuinely need access to that feature.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Never share logins</h4><p>Each person has their own login. The system logs who made changes, so shared logins make it impossible to trace errors or unauthorized actions.</p></div></li>
+      </ul>
+    `
+  },
+
+  agreements: {
+    title: "Rental Agreements & Returns",
+    subtitle: "Daily Operations · 8 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>The rental agreement is your legal document — it outlines the terms between your company and the customer. A properly closed return receipt ensures the right charges are applied and the deposit is released correctly. Skipping steps here can mean unrecorded damage or incorrect billing.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Opening the Agreement</h4><p>Once a reservation becomes active (customer picks up), you open the Rental Agreement. Record fuel level and mileage at pickup — this is your baseline for comparison at return.</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Customer signature</h4><p>The customer signs the agreement digitally (or via Topaz Signature Pad if integrated). Don't release the car without a signature — it's your legal protection.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>At Return</h4><p>Record return mileage and fuel level. Check for any damage. If damage is found, document it with photos before releasing the customer.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Closing the Agreement</h4><p>The Return Receipt finalizes the rental. Any additional charges (fuel, late fee, damage) are added here. The deposit is released automatically if no issues.</p><span class="nav-path">Reservations → [booking] → Return Receipt</span></div></li>
+      </ul>
+    `
+  },
+
+  payments: {
+    title: "Payments & Security Deposits",
+    subtitle: "Daily Operations · 7 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Money handling requires precision. HQ Rentals separates "charges" (money collected) from "deposits" (money held, then returned). Confusing the two is a common new-staff mistake that causes billing disputes and frustrated customers.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Payments vs. Deposits</h4><p><strong>Payment:</strong> Money the customer pays for the rental. Collected upfront or at return. <strong>Deposit:</strong> Money held as insurance against damage/fuel/late fees. Not charged — just held. Released when car returns clean.</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Payment methods</h4><p>HQ Rentals integrates with payment gateways (like Stripe, Authorize.net). Always process through the system — never take cash outside the system without recording it.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Currencies</h4><p>If your location handles multiple currencies, HQ Rentals manages conversion rates. Always confirm the correct currency with the customer before processing.</p></div></li>
+        <li class="step"><div class="step-num">4</div><div class="step-content"><h4>Invoices</h4><p>Invoices are auto-generated from completed rentals. Customers can receive these by email. You can also manually generate or re-send them from the reservation record.</p></div></li>
+      </ul>
+    `
+  },
+
+  rates: {
+    title: "Rates & Pricing Setup",
+    subtitle: "Fleet Management · 8 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>Rates are the backbone of your revenue. If a rate is set wrong, every booking on that vehicle class will be mispriced — potentially for weeks before anyone notices. Understanding how rates work helps you catch errors and explain pricing to customers.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Rates link to Vehicle Classes</h4><p>You don't set a rate per individual car — you set it per Vehicle Class. All cars in that class share the rate. If you need a different rate for one car, it needs its own class.</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Season-based rates</h4><p>Rates can be set per "Season" (time period). A "Base" season covers standard pricing. You can create holiday or peak-season rates for different periods.</p><span class="nav-path">Settings → Car Rental → Rates → Add Rates</span></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Additional charges</h4><p>Beyond the daily rate, you can charge for extras like GPS, child seats, or additional insurance. These are configured separately.</p><span class="nav-path">Settings → Additional Charges</span></div></li>
+      </ul>
+      <table class="rate-table">
+        <tr><th>Vehicle Type</th><th>Age</th><th>Daily Rate</th></tr>
+        <tr><td>Economy</td><td>1–5 years</td><td class="price">$80/day</td></tr>
+        <tr><td>Economy</td><td>5+ years</td><td class="price">$60/day</td></tr>
+        <tr><td>Compact</td><td>1–5 years</td><td class="price">$70/day</td></tr>
+        <tr><td>Compact</td><td>5+ years</td><td class="price">$50/day</td></tr>
+        <tr><td>SUV Economy</td><td>1–5 years</td><td class="price">$90/day</td></tr>
+        <tr><td>SUV Economy</td><td>5+ years</td><td class="price">$70/day</td></tr>
+      </table>
+    `
+  },
+
+  calendar: {
+    title: "Reservations Calendar",
+    subtitle: "Daily Operations · 6 min",
+    body: `
+      <div class="why-box">
+        <div class="why-box-label">🤔 Why does this matter?</div>
+        <p>The calendar is your "air traffic control" view. It shows which cars are out, which are coming back, and where gaps exist. A quick glance should tell you whether you can accept a new walk-in booking without having to open each reservation individually.</p>
+      </div>
+      <ul class="steps">
+        <li class="step"><div class="step-num">1</div><div class="step-content"><h4>Reading the Calendar</h4><p>Each row is a vehicle. Colored blocks represent active rentals. Gaps are available windows. Overlapping blocks signal a conflict (shouldn't happen if the system is used correctly).</p></div></li>
+        <li class="step"><div class="step-num">2</div><div class="step-content"><h4>Common daily check</h4><p>At the start of every shift, scan the calendar for: cars due back today, cars going out today, and any vehicles marked as unavailable (maintenance, reserved). This is your situational awareness.</p></div></li>
+        <li class="step"><div class="step-num">3</div><div class="step-content"><h4>Navigating by date range</h4><p>You can zoom to day, week, or month view. Week view is best for day-to-day operations. Month view is useful for capacity planning.</p><span class="nav-path">Reservations → Calendar</span></div></li>
+      </ul>
+    `
+  }
+};
+
+// ── Open Lesson ──
+function openLesson(id) {
+  currentLessonId = id;
+  const l = lessons[id];
+  if (!l) return;
+  document.getElementById('lessonTitle').textContent = l.title;
+  document.getElementById('lessonSubtitle').textContent = l.subtitle;
+  document.getElementById('lessonBody').innerHTML = l.body;
+  const isDone = completedModules.includes(id);
+  const btn = document.getElementById('markDoneBtn');
+  btn.textContent = isDone ? '✓ Completed' : '✓ Mark as Complete';
+  btn.style.opacity = isDone ? '0.5' : '1';
+  document.getElementById('lessonOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLesson(e) {
+  if (e && e.target !== document.getElementById('lessonOverlay')) return;
+  document.getElementById('lessonOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentLessonId = null;
+}
+
+// ── Mark Done ──
+function markDone() {
+  if (!currentLessonId) return;
+  if (!completedModules.includes(currentLessonId)) {
+    completedModules.push(currentLessonId);
+    localStorage.setItem('hqr_completed', JSON.stringify(completedModules));
+  }
+  updateProgress();
+  updateCards();
+  const btn = document.getElementById('markDoneBtn');
+  btn.textContent = '✓ Completed!';
+  btn.style.opacity = '0.5';
+}
+
+function updateProgress() {
+  const pct = (completedModules.length / totalModules) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${completedModules.length} of ${totalModules} modules completed`;
+}
+
+function updateCards() {
+  completedModules.forEach(id => {
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.classList.add('completed');
+      const badge = card.querySelector('.card-badge');
+      if (badge) { badge.className = 'card-badge badge-done'; badge.textContent = '✓ Done'; }
+      const btn = card.querySelector('.card-btn');
+      if (btn) { btn.className = 'card-btn done-btn'; btn.textContent = 'Review'; }
+    }
+  });
+}
+
+// ── Quiz ──
+function checkAnswer(el, isCorrect) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) {
+    opts.forEach(o => { if (o.onclick.toString().includes('true')) o.classList.add('correct'); });
+  }
+  const fb = document.getElementById('quizFeedback');
+  if (fb) { fb.classList.add('show'); }
+}
+
+// ── Tabs ──
+function switchTab(id) {
+  document.querySelectorAll('.content-area').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Checklist ──
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+// ── AI Chat ──
+const SYSTEM_PROMPT = `You are a friendly, knowledgeable training assistant for HQ Rentals Software. 
+You help new staff understand the HQ Rentals car rental management platform.
+
+Key knowledge about HQ Rentals:
+- It's a car rental management platform at hqrentalsoftware.com
+- Main sections: Car Rental (reservations, fleet, rates, payments, agreements), System Basics (users, contacts, forms, settings), Integrations (payment gateways, GPS tracking like Zubie/Geotab, toll management, driver license scanner), Online Reservations, and Reporting/Dashboards
+- Vehicle setup: Create Vehicle Class first (Make Model - Year - Color), then add individual Vehicle under Fleet > Vehicles. Set "Available on Website" to No until fully onboarded. Status should be "Reserved" until ready.
+- Daily rates by vehicle type: Economy 1-5yr=$80/day, Economy 5+yr=$60/day, Compact 1-5yr=$70/day, Compact 5+yr=$50/day, SUV Economy 1-5yr=$90/day, SUV Economy 5+yr=$70/day
+- Rates are set at: Settings > Car Rental > Rates > Add Rates (select Season=Base, input Vehicle Class)
+- Toll tags: Forms > Toll Tag > Add Toll Tag (uses transponder/E-ZPass number from fleet database)
+- Support: Use support ticket system inside Knowledge Base at hqrs.notion.site
+
+Explain things clearly for NEW staff. Use analogies when helpful. Be encouraging. Keep answers concise but complete.
+If asked about something very specific you're unsure about, suggest they check the official Knowledge Base or contact support.`;
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMessage('user', msg);
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('quickChips').style.display = 'none';
+
+  appendMessage('ai', '...', 'loading-msg');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I had trouble responding. Please try again.';
+    document.querySelector('.loading-msg')?.remove();
+    appendMessage('ai', reply);
+  } catch(e) {
+    document.querySelector('.loading-msg')?.remove();
+    appendMessage('ai', 'Connection issue — please try again in a moment.');
+  }
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function appendMessage(role, text, cls) {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}${cls ? ' ' + cls : ''}`;
+  div.innerHTML = `
+    <div class="msg-avatar ${role}">${role === 'ai' ? '🤖' : '👤'}</div>
+    <div class="msg-bubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+  `;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function sendChip(el) {
+  document.getElementById('chatInput').value = el.textContent;
+  sendMessage();
+}
+
+// ── Init ──
+updateProgress();
+updateCards();
+</script>
+</body>
+</html>
